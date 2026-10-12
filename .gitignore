@@ -7,3 +7,4 @@ _site/
 vendor/
 node_modules/
 assets/css/tailwind.css
+external_data/*.csv

@@ -4,6 +4,7 @@
   "scripts": {
     "build:css": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --minify",
     "watch:css": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --watch",
+    "import:stations": "bundle exec ruby tools/import_stations.rb",
     "build": "npm run build:css && bundle exec jekyll build",
     "dev": "npm run build:css && concurrently -k -n css,jekyll \"npm:watch:css\" \"bundle exec jekyll serve --livereload\""
   },
