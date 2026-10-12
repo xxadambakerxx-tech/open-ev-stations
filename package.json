@@ -1,0 +1,17 @@
+{
+  "name": "open-ev-stations",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./assets/css/tailwind.input.css -o ./assets/css/tailwind.css --watch",
+    "build": "npm run build:css && bundle exec jekyll build",
+    "dev": "npm run build:css && concurrently -k -n css,jekyll \"npm:watch:css\" \"bundle exec jekyll serve --livereload\""
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "concurrently": "^9.2.1"
+  },
+  "overrides": {
+    "@parcel/watcher": "^2.6.0"
+  }
+}

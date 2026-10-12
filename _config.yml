@@ -1,0 +1,15 @@
+title: Open EV Stations
+description: An open, community-friendly home for electric vehicle charging station data.
+url: ""
+baseurl: ""
+
+markdown: kramdown
+permalink: pretty
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - package.json
+  - package-lock.json
+  - assets/css/tailwind.input.css
