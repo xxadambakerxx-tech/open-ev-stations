@@ -42,53 +42,35 @@ description: Discover destination chargers, RV-friendly EV hookups, and charging
     </aside>
 
     <section class="relative min-h-[330px] overflow-hidden rounded-xl border border-slate-700/80 bg-[#071522] sm:min-h-[390px]" aria-labelledby="network-preview-title">
-      <div class="absolute inset-0 opacity-40" aria-hidden="true" style="background-image: linear-gradient(rgba(89, 156, 177, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(89, 156, 177, .08) 1px, transparent 1px); background-size: 34px 34px;"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_55%_55%,rgba(15,109,135,0.2),transparent_68%)]" aria-hidden="true"></div>
-
-      <svg class="absolute inset-0 h-full w-full" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="map-title map-description">
-        <title id="map-title">Illustrative outline of the contiguous United States</title>
-        <desc id="map-description">A decorative map illustration with a dotted route. It does not show live charging station locations.</desc>
-        <defs>
-          <linearGradient id="land" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0" stop-color="#17394a" />
-            <stop offset="1" stop-color="#0c2535" />
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="5" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-        </defs>
-        <path d="m129 160 31-21 38 7 23-19 37 11 30-14 24 14 31-7 28 17 28-3 25 16 32-4 25 11 28-8 31 18 30-4 21 16 28-10 30 15 26-2 20 15 33-3 24 17 29-3 14 15 27 1 15 13 27-2 9 18-14 13-2 26-21 15-10 24-24 9-14 27-17 8-12 22-16-5-12-23-21-8-13-25-21-13-14-23-22-3-13-15-31 2-18-13-23 9-20-7-28 8-18-10-26 12-28-3-21 13-31-7-22 14-29-9-17 13-30-7-17 14-27-12-19 8-24-18-17-5-13-29-16-10-3-31-14-16 4-26-15-15 3-25-12-16 8-27 16-17 1-26 18-16 10-29 24-13 7-28 20-13 11-26 23-12 6-19 21-9 8-21 20-6Z" fill="url(#land)" stroke="#387087" stroke-width="2" />
-        <path d="M174 247c87 41 152-12 226 24s132 16 195 33 105-12 148 23 61 39 92 37" fill="none" stroke="#30d8e6" stroke-dasharray="5 12" stroke-linecap="round" stroke-width="3" opacity=".65" />
-        <path d="M248 192c52 20 69 80 132 83s99-28 145-14 83 52 133 41 81-37 121-25" fill="none" stroke="#f8a55e" stroke-dasharray="4 13" stroke-linecap="round" stroke-width="2" opacity=".6" />
-        <g fill="#57e8f0" filter="url(#glow)">
-          <circle cx="174" cy="247" r="5" /><circle cx="256" cy="263" r="4" /><circle cx="337" cy="267" r="5" /><circle cx="400" cy="271" r="4" />
-          <circle cx="501" cy="304" r="5" /><circle cx="595" cy="315" r="4" /><circle cx="675" cy="337" r="5" /><circle cx="835" cy="364" r="5" />
-          <circle cx="248" cy="192" r="4" /><circle cx="380" cy="275" r="5" /><circle cx="525" cy="261" r="4" /><circle cx="658" cy="302" r="5" />
-        </g>
-        <g fill="#ffad65" filter="url(#glow)">
-          <circle cx="324" cy="284" r="4" /><circle cx="467" cy="288" r="4" /><circle cx="606" cy="331" r="4" /><circle cx="757" cy="352" r="4" />
-        </g>
-      </svg>
-
-      <div class="absolute inset-x-0 top-0 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#071522]/70 px-4 py-3 backdrop-blur-sm sm:px-5">
+      <div class="absolute inset-0 opacity-35" aria-hidden="true" style="background-image: radial-gradient(#1e7490 0.7px, transparent 0.7px); background-size: 22px 22px;"></div>
+      <div class="relative z-10 flex items-center justify-between gap-3 border-b border-white/10 bg-[#071522]/75 px-4 py-3 backdrop-blur-sm sm:px-5">
         <div>
-          <h2 id="network-preview-title" class="text-xs font-bold uppercase tracking-[0.17em] text-white sm:text-sm">A coast-to-coast directory</h2>
-          <p class="mt-1 text-xs text-slate-400">Hotels, RV parks &amp; road-trip-friendly charging</p>
+          <h2 id="network-preview-title" class="text-xs font-bold uppercase tracking-[0.17em] text-white sm:text-sm">The U.S. charging network</h2>
+          <p class="mt-1 text-xs text-slate-400">Destination charging, from coast to coast</p>
         </div>
-        <span class="inline-flex items-center gap-2 rounded-full border border-slate-600/80 bg-slate-950/70 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-300">
-          <span class="size-1.5 rounded-full bg-amber-400"></span>
-          Directory preview
+        <span class="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-slate-950/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-100">
+          <span class="size-1.5 rounded-full bg-cyan-300"></span>
+          Nationwide directory
         </span>
       </div>
 
-      <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-end justify-between gap-3 sm:bottom-5 sm:left-5 sm:right-5">
-        <div class="rounded-lg border border-white/10 bg-[#071522]/85 px-3 py-2 backdrop-blur-sm">
-          <p class="text-xs font-semibold text-white">The right stop changes the whole trip.</p>
-          <p class="mt-1 text-[11px] text-slate-400">Verified destination listings are coming soon.</p>
+      <div class="relative mx-auto flex min-h-[270px] max-w-4xl items-center justify-center px-5 py-5 sm:min-h-[320px] sm:px-10">
+        <div id="us-state-map" class="w-full max-w-[760px] drop-shadow-[0_0_24px_rgba(34,211,238,0.12)]" aria-label="Interactive map of the United States. Select a state to see its destination charging station count." role="group">
+          {% include us-state-map.svg %}
         </div>
-        <p class="text-[10px] font-medium text-slate-500">Illustrative graphic · Not a live map</p>
       </div>
+      <div class="relative z-10 flex flex-col items-center gap-1 px-4 pb-4 text-center">
+        <p id="selected-state-count" class="text-xs font-semibold text-cyan-100" aria-live="polite">Select a state to see its destination charging station count.</p>
+      </div>
+      {% assign stations_by_state = site.data.destination_chargers | group_by_exp: "station", "station.state" %}
+      <script id="state-station-counts" type="application/json">
+        {
+          {% for state_group in stations_by_state %}
+            {{ state_group.name | jsonify }}: {{ state_group.items.size }}{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        }
+      </script>
+      <script src="{{ '/assets/js/us-state-map.js' | relative_url }}" defer></script>
     </section>
   </div>
 </section>

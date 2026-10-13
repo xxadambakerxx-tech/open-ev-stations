@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+.us-state-map {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.us-state-map path[data-id] {
+  cursor: pointer;
+  fill: #0b2c40 !important;
+  stroke: #67e8f9 !important;
+  stroke-width: 1.35px !important;
+  transition: fill 140ms ease, stroke 140ms ease;
+}
+
+.us-state-map path[data-id]:hover,
+.us-state-map path[data-id]:focus,
+.us-state-map path[data-id].is-selected {
+  fill: #15556d !important;
+  stroke: #a5f3fc !important;
+}
+
+.us-state-map path[data-id]:focus {
+  outline: none;
+  stroke-width: 3px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .us-state-map path[data-id] {
+    transition: none;
+  }
+}

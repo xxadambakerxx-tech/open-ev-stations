@@ -35,7 +35,10 @@
 
       <footer class="mx-auto flex max-w-[1440px] flex-col gap-3 border-t border-slate-700/70 px-4 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <p>&copy; {{ "now" | date: "%Y" }} {{ site.title | escape }}. A directory for better electric road trips.</p>
-        <p>Station details will be published as verified data becomes available.</p>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <p>Station details will be published as verified data becomes available.</p>
+          <a href="{{ '/disclaimer/' | relative_url }}" class="transition hover:text-cyan-200">Disclaimer</a>
+        </div>
       </footer>
     </div>
   </body>
