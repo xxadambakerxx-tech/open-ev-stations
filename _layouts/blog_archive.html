@@ -1,0 +1,48 @@
+---
+layout: default
+---
+
+<section class="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8" aria-labelledby="blog-archive-heading">
+  <a href="{{ '/' | relative_url }}#glove-box" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+    <svg viewBox="0 0 20 20" fill="currentColor" class="size-4 rotate-90" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+    </svg>
+    Back to home
+  </a>
+
+  <header class="mt-7">
+    <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">For the glove box</p>
+    <h1 id="blog-archive-heading" class="mt-1 text-2xl font-bold uppercase tracking-wide text-white sm:text-3xl">EV road-trip guides</h1>
+    <p class="mt-2 text-sm text-slate-400">Charging explainers and practical advice for the road.</p>
+  </header>
+
+  <div class="mt-6">
+    {% if page.posts.size > 0 %}
+      {% include post_cards.html posts=page.posts %}
+    {% else %}
+      <p class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5 text-sm text-slate-400">No guides have been published yet.</p>
+    {% endif %}
+  </div>
+
+  {% if page.total_pages > 1 %}
+    <nav class="mt-8 flex items-center justify-between gap-4 border-t border-slate-700/70 pt-5" aria-label="Blog pagination">
+      <div>
+        {% if page.previous_page_url %}
+          <a href="{{ page.previous_page_url | relative_url }}" rel="prev" class="inline-flex items-center gap-2 rounded-lg border border-slate-600/80 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/5">
+            <span aria-hidden="true">&larr;</span>
+            Newer posts
+          </a>
+        {% endif %}
+      </div>
+      <p class="text-xs tabular-nums text-slate-500">Page {{ page.current_page }} of {{ page.total_pages }}</p>
+      <div>
+        {% if page.next_page_url %}
+          <a href="{{ page.next_page_url | relative_url }}" rel="next" class="inline-flex items-center gap-2 rounded-lg border border-slate-600/80 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/5">
+            Older posts
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        {% endif %}
+      </div>
+    </nav>
+  {% endif %}
+</section>

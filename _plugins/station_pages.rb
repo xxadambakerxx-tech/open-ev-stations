@@ -68,7 +68,27 @@ class StateCategoryPage < Jekyll::PageWithoutAFile
   end
 end
 
+class BlogArchivePage < Jekyll::PageWithoutAFile
+  def initialize(site, page_number, posts, total_pages)
+    page_path = page_number == 1 ? "blog" : "blog/page/#{page_number}"
+    super(site, site.source, page_path, "index.html")
+    self.data = {
+      "layout" => "blog_archive",
+      "title" => "EV road-trip guides",
+      "description" => "Charging explainers and practical electric road-trip guides.",
+      "permalink" => page_number == 1 ? "/blog/" : "/#{page_path}/",
+      "posts" => posts,
+      "current_page" => page_number,
+      "total_pages" => total_pages,
+      "previous_page_url" => page_number > 1 ? (page_number == 2 ? "/blog/" : "/blog/page/#{page_number - 1}/") : nil,
+      "next_page_url" => page_number < total_pages ? "/blog/page/#{page_number + 1}/" : nil
+    }
+  end
+end
+
 class StationPagesGenerator < Jekyll::Generator
+  BLOG_PAGE_SIZE = 6
+
   CATEGORIES = [
     { "id" => "lodging", "name" => "Hotels, inns & B&Bs", "types" => %w[HOTEL INN B_AND_B] },
     { "id" => "restaurants", "name" => "Restaurants", "types" => %w[RESTAURANT] },
@@ -189,6 +209,14 @@ class StationPagesGenerator < Jekyll::Generator
         category.merge("count" => category_state.fetch("count"))
       end
       site.pages << StationStatePage.new(site, state, state_categories)
+    end
+
+    posts = site.posts.docs.sort_by(&:date).reverse
+    total_pages = [(posts.length.to_f / BLOG_PAGE_SIZE).ceil, 1].max
+    total_pages.times do |index|
+      page_number = index + 1
+      page_posts = posts.slice(index * BLOG_PAGE_SIZE, BLOG_PAGE_SIZE) || []
+      site.pages << BlogArchivePage.new(site, page_number, page_posts, total_pages)
     end
   end
 end

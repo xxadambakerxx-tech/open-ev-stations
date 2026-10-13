@@ -58,4 +58,4 @@ The raw CSV is excluded from the published site and ignored by Git to avoid comm
 
 The homepage state map is sourced from [Simplemaps' free U.S. SVG map](https://simplemaps.com/resources/svg-us) and used under its [SVG map license](https://simplemaps.com/resources/svg-license). Map attribution and usage details are published on the site's `/disclaimer/` page, linked from the footer.
 
-The homepage's "For the glove box" feed shows up to three recent Jekyll posts from `_posts`. Add dated Markdown posts there with `layout: post`, a title, and an excerpt to publish charging and road-trip guides.
+The homepage's "For the glove box" feed shows the three most recent Jekyll posts from `_posts`. Its "All guides" link opens `/blog/`, a paginated archive showing up to six posts per page. Add dated Markdown posts there with `layout: post`, a title, and an excerpt to publish charging and road-trip guides.

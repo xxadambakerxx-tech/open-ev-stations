@@ -84,25 +84,19 @@ description: Discover destination chargers, RV-friendly EV hookups, and charging
 
   {% assign recent_posts = site.posts | slice: 0, 3 %}
   {% if recent_posts.size > 0 %}
-    <ul class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-      {% for post in recent_posts %}
-        <li>
-          <article class="h-full rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5 transition hover:border-cyan-300/40">
-            <p class="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">{{ post.date | date: "%b %-d, %Y" }}</p>
-            <h3 class="mt-2 text-base font-bold text-white">
-              <a href="{{ post.url | relative_url }}" class="transition hover:text-cyan-200">{{ post.title | escape }}</a>
-            </h3>
-            {% if post.excerpt %}
-              <div class="mt-2 text-sm leading-6 text-slate-400">{{ post.excerpt | strip_html | truncate: 180 }}</div>
-            {% endif %}
-            <a href="{{ post.url | relative_url }}" class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-cyan-200 transition hover:text-cyan-100">
-              Read article
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-          </article>
-        </li>
-      {% endfor %}
-    </ul>
+    {% include post_cards.html posts=recent_posts %}
+    <nav class="mt-5 flex flex-wrap items-center justify-between gap-3" aria-label="Guide feed navigation">
+      <a href="{{ '/blog/' | relative_url }}" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+        All guides
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+      {% if site.posts.size > 6 %}
+        <a href="{{ '/blog/page/2/' | relative_url }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-600/80 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/5">
+          Older posts
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      {% endif %}
+    </nav>
   {% else %}
     <div class="rounded-xl border border-slate-700/80 bg-gradient-to-r from-[#0d1c2b] via-[#102433] to-[#0d1c2b] p-5 sm:p-7">
       <h3 class="text-sm font-bold uppercase tracking-wide text-white">Guides are in the works</h3>
