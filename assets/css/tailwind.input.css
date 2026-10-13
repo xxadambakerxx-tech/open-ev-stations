@@ -16,10 +16,10 @@
 }
 
 .us-state-map path[data-id]:hover,
-.us-state-map path[data-id]:focus,
-.us-state-map path[data-id].is-selected {
+.us-state-map path[data-id]:focus {
   fill: #15556d !important;
   stroke: #a5f3fc !important;
+  stroke-width: 1.8px !important;
 }
 
 .us-state-map path[data-id]:focus {
@@ -31,4 +31,5 @@
   .us-state-map path[data-id] {
     transition: none;
   }
+
 }

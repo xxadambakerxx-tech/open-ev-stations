@@ -11,6 +11,7 @@ module ImportStations
     "station_id" => "id",
     "station_name" => "station_name",
     "street_address" => "street_address",
+    "station_phone" => "station_phone",
     "city" => "city",
     "state" => "state",
     "zip" => "zip",
@@ -34,7 +35,7 @@ module ImportStations
   ].freeze
 
   TEXT_FIELDS = %w[
-    street_address city state zip facility_type access_days_time ev_pricing
+    street_address station_phone city state zip facility_type access_days_time ev_pricing
   ].freeze
 
   def self.normalize_header(header)
