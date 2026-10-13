@@ -1,7 +1,7 @@
 const map = document.querySelector("#us-state-map svg.us-state-map");
 const countData = document.querySelector("#state-station-counts");
-const status = document.querySelector("#selected-state-count");
 const stationCounts = JSON.parse(countData.textContent);
+const statePagePrefix = document.querySelector("#us-state-map").dataset.statePagePrefix;
 
 const stateNames = {
   AK: "Alaska",
@@ -58,27 +58,7 @@ const stateNames = {
 };
 
 map.setAttribute("role", "group");
-map.setAttribute("aria-label", "Select a state to view its destination charging station count.");
-
-let selectedState;
-
-function selectState(path) {
-  if (selectedState) {
-    selectedState.classList.remove("is-selected");
-    selectedState.setAttribute("aria-pressed", "false");
-  }
-
-  selectedState = path;
-  selectedState.classList.add("is-selected");
-  selectedState.setAttribute("aria-pressed", "true");
-
-  const code = selectedState.dataset.id;
-  const name = stateNames[code];
-  const count = stationCounts[code] || 0;
-  const locations = new Intl.NumberFormat("en-US").format(count);
-  const label = count === 1 ? "location" : "locations";
-  status.textContent = `${name}: ${locations} destination charging ${label} in the directory.`;
-}
+map.setAttribute("aria-label", "Select a state to browse its EV charging stations.");
 
 map.querySelectorAll("path[data-id]").forEach((path) => {
   const code = path.dataset.id;
@@ -88,18 +68,20 @@ map.querySelectorAll("path[data-id]").forEach((path) => {
   }
 
   const count = stationCounts[code] || 0;
-  path.setAttribute("role", "button");
+  const pageUrl = `${statePagePrefix}${code.toLowerCase()}/`;
+  path.setAttribute("role", "link");
   path.setAttribute("tabindex", "0");
-  path.setAttribute("aria-pressed", "false");
   path.setAttribute(
     "aria-label",
-    `${name}: ${new Intl.NumberFormat("en-US").format(count)} destination charging locations`
+    `${name}: browse ${new Intl.NumberFormat("en-US").format(count)} EV charging stations`
   );
-  path.addEventListener("click", () => selectState(path));
+  path.addEventListener("click", () => {
+    window.location.assign(pageUrl);
+  });
   path.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
+    if (event.key === "Enter") {
       event.preventDefault();
-      selectState(path);
+      window.location.assign(pageUrl);
     }
   });
 });

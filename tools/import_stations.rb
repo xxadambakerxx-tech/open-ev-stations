@@ -16,6 +16,8 @@ module ImportStations
     "facility_type" => "facility_type",
     "access_days_time" => "access_days_time",
     "ev_pricing" => "ev_pricing",
+    "ev_level1_evse_num" => "ev_level1_num",
+    "ev_level1_num" => "ev_level1_num",
     "ev_level2_evse_num" => "ev_level2_num",
     "ev_level2_num" => "ev_level2_num",
     "ev_dc_fast_count" => "ev_dc_fast_num",
@@ -105,9 +107,10 @@ module ImportStations
       station[field] = value.nil? || value.strip.empty? ? nil : value.strip
     end
 
+    station["ev_level1_num"] = normalize_count(values["ev_level1_num"], "ev_level1_num", row_number)
     station["ev_level2_num"] = normalize_count(values["ev_level2_num"], "ev_level2_num", row_number)
     station["ev_dc_fast_num"] = normalize_count(values["ev_dc_fast_num"], "ev_dc_fast_num", row_number)
-    station["ev_connector_types"] = values["ev_connector_types"].to_s.split(/[,;|]/).map(&:strip).reject(&:empty?).uniq
+    station["ev_connector_types"] = values["ev_connector_types"].to_s.split(/[,\s;|]+/).reject(&:empty?).uniq
     station["latitude"] = normalize_coordinate(values["latitude"], "latitude", row_number)
     station["longitude"] = normalize_coordinate(values["longitude"], "longitude", row_number)
     station["slug"] = id.downcase.gsub(/[^a-z0-9_-]+/, "-").gsub(/\A[-_]+|[-_]+\z/, "")

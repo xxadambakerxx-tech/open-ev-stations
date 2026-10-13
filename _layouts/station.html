@@ -3,11 +3,11 @@ layout: default
 ---
 
 <article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-  <a href="{{ '/' | relative_url }}#station-listings" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+  <a href="{{ '/states/' | relative_url }}{{ page.state | downcase | escape }}/" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
     <svg viewBox="0 0 20 20" fill="currentColor" class="size-4 rotate-90" aria-hidden="true">
       <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
     </svg>
-    Back to station directory
+    Back to {{ page.state | escape }} stations
   </a>
 
   <header class="mt-7 rounded-2xl border border-slate-700/80 bg-gradient-to-br from-[#112d3a] via-[#0d1c2b] to-[#0b1724] p-6 sm:p-9">
@@ -29,7 +29,11 @@ layout: default
 
   <section class="mt-6" aria-labelledby="station-details-heading">
     <h2 id="station-details-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Charging details</h2>
-    <dl class="mt-3 grid gap-3 sm:grid-cols-2">
+    <dl class="mt-3 grid gap-3 grid-cols-2 sm:grid-cols-4">
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
+        <dt class="text-sm font-medium text-slate-400">Level 1 chargers</dt>
+        <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_level1_num | default: 0 }}</dd>
+      </div>
       <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
         <dt class="text-sm font-medium text-slate-400">Level 2 chargers</dt>
         <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_level2_num | default: 0 }}</dd>
@@ -39,12 +43,26 @@ layout: default
         <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_dc_fast_num | default: 0 }}</dd>
       </div>
       <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
-        <dt class="text-sm font-medium text-slate-400">Access hours</dt>
-        <dd class="mt-2 leading-6 text-white">{% if page.access_days_time %}{{ page.access_days_time | escape }}{% else %}Not specified{% endif %}</dd>
-      </div>
-      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
         <dt class="text-sm font-medium text-slate-400">Pricing</dt>
         <dd class="mt-2 leading-6 text-white">{% if page.ev_pricing %}{{ page.ev_pricing | escape }}{% else %}Contact the location for pricing{% endif %}</dd>
+      </div>
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5 sm:col-span-4">
+        <dt class="text-sm font-medium text-slate-400">Access hours</dt>
+        {% if page.access_days_time %}
+          {% assign access_details = page.access_days_time | replace: "\n", ";" | split: ";" %}
+          <dd>
+            <ul class="mt-2 list-disc space-y-1 pl-5 leading-6 text-white">
+              {% for access_detail in access_details %}
+                {% assign access_detail_text = access_detail | strip %}
+                {% unless access_detail_text == empty %}
+                  <li>{{ access_detail_text | escape }}</li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+          </dd>
+        {% else %}
+          <dd class="mt-2 leading-6 text-white">Not specified</dd>
+        {% endif %}
       </div>
     </dl>
   </section>
@@ -65,7 +83,6 @@ layout: default
       <div class="mb-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 id="location-map-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Station location</h2>
-          <p class="mt-1 text-sm text-slate-400">{{ page.latitude }}, {{ page.longitude }}</p>
         </div>
         <a href="https://www.openstreetmap.org/?mlat={{ page.latitude }}&amp;mlon={{ page.longitude }}#map=16/{{ page.latitude }}/{{ page.longitude }}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-cyan-200 underline decoration-cyan-300/40 underline-offset-4 hover:text-cyan-100">Open in OpenStreetMap</a>
       </div>

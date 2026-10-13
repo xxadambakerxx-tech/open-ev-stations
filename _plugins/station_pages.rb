@@ -36,6 +36,21 @@ class StationCategoryPage < Jekyll::PageWithoutAFile
   end
 end
 
+class StationStatePage < Jekyll::PageWithoutAFile
+  def initialize(site, state, categories)
+    state_slug = state.fetch("slug")
+    super(site, site.source, "states/#{state_slug}", "index.html")
+    self.data = {
+      "layout" => "state",
+      "title" => "EV charging categories in #{state.fetch('name')}",
+      "description" => "Browse EV charging station categories in #{state.fetch('name')}.",
+      "permalink" => "/states/#{state_slug}/",
+      "state" => state,
+      "categories" => categories
+    }
+  end
+end
+
 class StateCategoryPage < Jekyll::PageWithoutAFile
   def initialize(site, category, state)
     category_slug = category.fetch("id")
@@ -148,6 +163,30 @@ class StationPagesGenerator < Jekyll::Generator
 
       slugs[slug] = true
       site.pages << StationPage.new(site, station)
+    end
+
+    state_groups = stations.group_by do |station|
+      state_code = station["state"].to_s.strip.upcase
+      unless state_code.match?(/\A[A-Z]{2}\z/)
+        raise ArgumentError, "Station #{station['id']} must have a two-letter state or territory code"
+      end
+
+      state_code
+    end
+    state_groups.each do |state_code, state_stations|
+      state = {
+        "code" => state_code,
+        "name" => STATE_NAMES.fetch(state_code, state_code),
+        "slug" => state_code.downcase,
+        "count" => state_stations.length
+      }
+      state_categories = categories.filter_map do |category|
+        category_state = category.fetch("states").find { |entry| entry.fetch("code") == state_code }
+        next unless category_state
+
+        category.merge("count" => category_state.fetch("count"))
+      end
+      site.pages << StationStatePage.new(site, state, state_categories)
     end
   end
 end
