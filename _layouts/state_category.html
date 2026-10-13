@@ -1,0 +1,71 @@
+---
+layout: default
+---
+
+<article class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+  <a href="{{ '/categories/' | relative_url }}{{ page.category.id | escape }}/" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+    <svg viewBox="0 0 20 20" fill="currentColor" class="size-4 rotate-90" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+    </svg>
+    Back to {{ page.category.name | escape }}
+  </a>
+
+  <header class="mt-7 rounded-2xl border border-slate-700/80 bg-gradient-to-br from-[#112d3a] via-[#0d1c2b] to-[#0b1724] p-6 sm:p-9">
+    <p class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">{{ page.category.name | escape }}</p>
+    <h1 class="mt-3 text-3xl font-bold tracking-tight text-white sm:text-5xl">{{ page.state.name | escape }}</h1>
+    <p class="mt-3 text-base leading-7 text-slate-300">{{ page.state.count }} charging {% if page.state.count == 1 %}location{% else %}locations{% endif %} in this state or territory.</p>
+  </header>
+
+  <section class="mt-8" aria-labelledby="state-category-stations-heading">
+    <div class="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">AFDC station data</p>
+        <h2 id="state-category-stations-heading" class="mt-1 text-lg font-bold uppercase tracking-wide text-white">{{ page.category.name | escape }} in {{ page.state.name | escape }}</h2>
+      </div>
+      <span class="text-sm tabular-nums text-slate-400">{{ page.state.count }} locations</span>
+    </div>
+
+    {% if page.stations.size > 0 %}
+      <ul class="grid gap-3 sm:grid-cols-2">
+        {% for station in page.stations %}
+          <li>
+            <a href="{{ '/chargers/' | relative_url }}{{ station.slug | escape }}/" class="block h-full rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433] sm:p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <h3 class="truncate text-base font-semibold text-white">{{ station.station_name | escape }}</h3>
+                  <p class="mt-1 text-sm text-slate-400">
+                    {% if station.city %}{{ station.city | escape }}{% endif %}{% if station.city and station.state %}, {% endif %}{% if station.state %}{{ station.state | escape }}{% endif %}
+                    {% unless station.city or station.state %}Location not specified{% endunless %}
+                  </p>
+                </div>
+                <span class="shrink-0 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-cyan-100">{{ station.facility_type | replace: "_", " " | escape }}</span>
+              </div>
+
+              {% if station.street_address %}
+                <p class="mt-3 truncate text-xs text-slate-500">{{ station.street_address | escape }}{% if station.zip %}, {{ station.zip | escape }}{% endif %}</p>
+              {% endif %}
+
+              <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-slate-700/70 pt-3 text-xs text-slate-400">
+                <span>{{ station.ev_level2_num | default: 0 }} Level 2</span>
+                <span>{{ station.ev_dc_fast_num | default: 0 }} DC fast</span>
+                {% if station.ev_connector_types.size > 0 %}
+                  <span class="truncate">{{ station.ev_connector_types | join: ", " | escape }}</span>
+                {% endif %}
+                {% if station.latitude and station.longitude %}
+                  <span class="inline-flex items-center gap-1 text-cyan-200">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M10 18s6-3.8 6-10a6 6 0 1 0-12 0c0 6.2 6 10 6 10Zm0-7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" clip-rule="evenodd" />
+                    </svg>
+                    Map available
+                  </span>
+                {% endif %}
+              </div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="rounded-lg border border-dashed border-slate-700 bg-[#0d1c2b]/60 px-4 py-5 text-sm text-slate-400">There are no stations in this category and state yet.</p>
+    {% endif %}
+  </section>
+</article>

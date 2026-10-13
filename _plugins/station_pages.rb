@@ -36,6 +36,23 @@ class StationCategoryPage < Jekyll::PageWithoutAFile
   end
 end
 
+class StateCategoryPage < Jekyll::PageWithoutAFile
+  def initialize(site, category, state)
+    category_slug = category.fetch("id")
+    state_slug = state.fetch("slug")
+    super(site, site.source, "categories/#{category_slug}/#{state_slug}", "index.html")
+    self.data = {
+      "layout" => "state_category",
+      "title" => "#{category.fetch('name')} in #{state.fetch('name')}",
+      "description" => "#{state.fetch('count')} #{category.fetch('name')} charging locations in #{state.fetch('name')}.",
+      "permalink" => "/categories/#{category_slug}/#{state_slug}/",
+      "category" => category,
+      "state" => state,
+      "stations" => state.fetch("stations")
+    }
+  end
+end
+
 class StationPagesGenerator < Jekyll::Generator
   CATEGORIES = [
     { "id" => "lodging", "name" => "Hotels, inns & B&Bs", "types" => %w[HOTEL INN B_AND_B] },
@@ -45,6 +62,22 @@ class StationPagesGenerator < Jekyll::Generator
     { "id" => "shopping-centers", "name" => "Shopping centers", "types" => %w[SHOPPING_CENTER] },
     { "id" => "multi-unit-dwellings", "name" => "Multi-unit dwellings", "types" => %w[MULTI_UNIT_DWELLING MULTI_FAMILY] }
   ].freeze
+
+  STATE_NAMES = {
+    "AK" => "Alaska", "AL" => "Alabama", "AR" => "Arkansas", "AZ" => "Arizona",
+    "CA" => "California", "CO" => "Colorado", "CT" => "Connecticut", "DC" => "District of Columbia",
+    "DE" => "Delaware", "FL" => "Florida", "GA" => "Georgia", "HI" => "Hawaii",
+    "IA" => "Iowa", "ID" => "Idaho", "IL" => "Illinois", "IN" => "Indiana",
+    "KS" => "Kansas", "KY" => "Kentucky", "LA" => "Louisiana", "MA" => "Massachusetts",
+    "MD" => "Maryland", "ME" => "Maine", "MI" => "Michigan", "MN" => "Minnesota",
+    "MO" => "Missouri", "MS" => "Mississippi", "MT" => "Montana", "NC" => "North Carolina",
+    "ND" => "North Dakota", "NE" => "Nebraska", "NH" => "New Hampshire", "NJ" => "New Jersey",
+    "NM" => "New Mexico", "NV" => "Nevada", "NY" => "New York", "OH" => "Ohio",
+    "OK" => "Oklahoma", "OR" => "Oregon", "PA" => "Pennsylvania", "PR" => "Puerto Rico",
+    "RI" => "Rhode Island", "SC" => "South Carolina", "SD" => "South Dakota", "TN" => "Tennessee",
+    "TX" => "Texas", "UT" => "Utah", "VA" => "Virginia", "VT" => "Vermont",
+    "WA" => "Washington", "WI" => "Wisconsin", "WV" => "West Virginia", "WY" => "Wyoming"
+  }.freeze
 
   safe true
   priority :normal
@@ -69,7 +102,30 @@ class StationPagesGenerator < Jekyll::Generator
         categorized_ids[station["id"]] = true
       end
 
-      generated_category = category.merge("count" => category_stations.length, "stations" => category_stations)
+      state_groups = category_stations.group_by do |station|
+        state_code = station["state"].to_s.strip.upcase
+        unless state_code.match?(/\A[A-Z]{2}\z/)
+          raise ArgumentError, "Station #{station['id']} must have a two-letter state or territory code"
+        end
+
+        state_code
+      end
+      states = state_groups.map do |state_code, state_stations|
+        state = {
+          "code" => state_code,
+          "name" => STATE_NAMES.fetch(state_code, state_code),
+          "slug" => state_code.downcase,
+          "count" => state_stations.length,
+          "stations" => state_stations
+        }
+        site.pages << StateCategoryPage.new(site, category, state)
+        state.reject { |key, _value| key == "stations" }
+      end.sort_by { |state| state.fetch("name") }
+
+      generated_category = category.merge(
+        "count" => category_stations.length,
+        "states" => states
+      )
       site.pages << StationCategoryPage.new(site, generated_category)
       generated_category
     end
