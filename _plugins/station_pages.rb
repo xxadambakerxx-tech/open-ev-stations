@@ -178,7 +178,9 @@ class StationPagesGenerator < Jekyll::Generator
         "code" => state_code,
         "name" => STATE_NAMES.fetch(state_code, state_code),
         "slug" => state_code.downcase,
-        "count" => state_stations.length
+        "count" => state_stations.length,
+        "average_nearest_distance_miles" => state_stations.first.fetch("state_average_nearest_distance_miles"),
+        "geocoded_station_count" => state_stations.first.fetch("state_geocoded_station_count")
       }
       state_categories = categories.filter_map do |category|
         category_state = category.fetch("states").find { |entry| entry.fetch("code") == state_code }

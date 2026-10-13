@@ -4,6 +4,7 @@ require "json"
 
 module ImportStations
   OUTPUT_PATH = File.expand_path("../_data/destination_chargers.json", __dir__)
+  EARTH_RADIUS_MILES = 3958.7613
 
   HEADER_ALIASES = {
     "id" => "id",
@@ -70,6 +71,47 @@ module ImportStations
     number
   rescue ArgumentError, TypeError
     raise ArgumentError, "Row #{row_number}: #{field} must be a valid coordinate"
+  end
+
+  def self.distance_miles(first, second)
+    latitude_1 = first["latitude"] * Math::PI / 180
+    latitude_2 = second["latitude"] * Math::PI / 180
+    latitude_delta = latitude_2 - latitude_1
+    longitude_delta = (second["longitude"] - first["longitude"]) * Math::PI / 180
+    haversine = Math.sin(latitude_delta / 2)**2 +
+                Math.cos(latitude_1) * Math.cos(latitude_2) * Math.sin(longitude_delta / 2)**2
+
+    EARTH_RADIUS_MILES * 2 * Math.asin([1, Math.sqrt(haversine)].min)
+  end
+
+  def self.add_state_distance_averages(stations)
+    stations.group_by { |station| station["state"].to_s.strip.upcase }.each do |state, state_stations|
+      raise ArgumentError, "Station state is required to calculate state distance averages" if state.empty?
+
+      geocoded_stations = state_stations.select do |station|
+        !station["latitude"].nil? && !station["longitude"].nil?
+      end
+      average_nearest_distance = if geocoded_stations.length < 2
+                                   nil
+                                 else
+                                   nearest_distances = geocoded_stations.each_with_index.map do |station, index|
+                                     nearest_distance = nil
+                                     geocoded_stations.each_with_index do |other, other_index|
+                                       next if index == other_index
+
+                                       distance = distance_miles(station, other)
+                                       nearest_distance = distance if nearest_distance.nil? || distance < nearest_distance
+                                     end
+                                     nearest_distance
+                                   end
+                                   (nearest_distances.sum / nearest_distances.length).round(2)
+                                 end
+
+      state_stations.each do |station|
+        station["state_average_nearest_distance_miles"] = average_nearest_distance
+        station["state_geocoded_station_count"] = geocoded_stations.length
+      end
+    end
   end
 
   def self.column_map(headers)
@@ -146,6 +188,8 @@ module ImportStations
       add_station.call(first_row, 2)
       csv.each.with_index(3) { |row, row_number| add_station.call(row, row_number) }
     end
+
+    add_state_distance_averages(stations)
 
     FileUtils.mkdir_p(File.dirname(output_path))
     temporary_path = "#{output_path}.tmp"
