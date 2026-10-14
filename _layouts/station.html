@@ -1,0 +1,158 @@
+---
+layout: default
+---
+
+<article class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+  <nav aria-label="Breadcrumb" class="text-sm text-slate-400">
+    <ol class="flex flex-wrap items-center gap-2">
+      <li><a href="{{ '/' | relative_url }}" class="transition hover:text-cyan-200">Home</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="{{ '/state/' | relative_url }}{{ page.state_slug | escape }}/" class="transition hover:text-cyan-200">{{ page.state_name | escape }} EV charging</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href="{{ '/state/' | relative_url }}{{ page.state_slug | escape }}/category/{{ page.category_id | escape }}/" class="transition hover:text-cyan-200">{{ page.category_name | escape }}</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page" class="text-slate-200">{{ page.station_name | escape }}</li>
+    </ol>
+  </nav>
+
+  <a href="{{ '/state/' | relative_url }}{{ page.state_slug | escape }}/" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+    <svg viewBox="0 0 20 20" fill="currentColor" class="size-4 rotate-90" aria-hidden="true">
+      <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+    </svg>
+    Back to {{ page.state | escape }} stations
+  </a>
+
+  <header class="mt-7 rounded-2xl border border-slate-700/80 bg-gradient-to-br from-[#112d3a] via-[#0d1c2b] to-[#0b1724] p-6 sm:p-9">
+    <div class="flex flex-wrap items-center gap-2">
+      {% if page.facility_type %}
+        <span class="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-100">{{ page.facility_type | replace: "_", " " | escape }}</span>
+      {% endif %}
+      <span class="rounded-full border border-slate-600/80 bg-slate-950/40 px-3 py-1 text-xs font-semibold text-slate-300">Station ID {{ page.id | escape }}</span>
+    </div>
+    <h1 class="mt-5 text-3xl font-bold tracking-tight text-white sm:text-5xl">{{ page.station_name | escape }}</h1>
+    <p class="mt-3 text-base leading-7 text-slate-300">
+      {% if page.street_address %}{{ page.street_address | escape }}{% endif %}
+      {% if page.city %}{% if page.street_address %}, {% endif %}{{ page.city | escape }}{% endif %}
+      {% if page.state %}{% if page.city or page.street_address %}, {% endif %}{{ page.state | escape }}{% endif %}
+      {% if page.zip %} {{ page.zip | escape }}{% endif %}
+      {% unless page.street_address or page.city or page.state or page.zip %}Location details have not been provided.{% endunless %}
+    
+    {% if page.station_phone %}
+      <span class="mt-2 text-sm text-slate-300">|Phone: <a href="tel:{{ page.station_phone | escape }}" class="font-medium text-cyan-200 underline decoration-cyan-300/40 underline-offset-4 transition hover:text-cyan-100">{{ page.station_phone | escape }}</a></span>
+    {% endif %}
+    </p>
+  </header>
+
+  <section class="mt-6" aria-labelledby="station-details-heading">
+    <h2 id="station-details-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Charging capabilities and access details</h2>
+    <dl class="mt-3 grid gap-3 grid-cols-2 sm:grid-cols-4">
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
+        <dt class="text-sm font-medium text-slate-400">Level 1 chargers</dt>
+        <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_level1_num | default: 0 }}</dd>
+      </div>
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
+        <dt class="text-sm font-medium text-slate-400">Level 2 chargers</dt>
+        <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_level2_num | default: 0 }}</dd>
+      </div>
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
+        <dt class="text-sm font-medium text-slate-400">DC fast chargers</dt>
+        <dd class="mt-2 text-3xl font-semibold text-white">{{ page.ev_dc_fast_num | default: 0 }}</dd>
+      </div>
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5">
+        <dt class="text-sm font-medium text-slate-400">Pricing</dt>
+        <dd class="mt-2 leading-6 text-white">{% if page.ev_pricing %}{{ page.ev_pricing | escape }}{% else %}Contact the location for pricing{% endif %}</dd>
+      </div>
+      <div class="rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5 sm:col-span-4">
+        <dt class="text-sm font-medium text-slate-400">Access hours</dt>
+        {% if page.access_days_time %}
+          {% assign access_details = page.access_days_time | replace: "\n", ";" | split: ";" %}
+          <dd>
+            <ul class="mt-2 list-disc space-y-1 pl-5 leading-6 text-white">
+              {% for access_detail in access_details %}
+                {% assign access_detail_text = access_detail | strip %}
+                {% unless access_detail_text == empty %}
+                  <li>{{ access_detail_text | escape }}</li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+          </dd>
+        {% else %}
+          <dd class="mt-2 leading-6 text-white">Not specified</dd>
+        {% endif %}
+      </div>
+    </dl>
+  </section>
+
+  {% if page.ev_connector_types.size > 0 %}
+    <section class="mt-8" aria-labelledby="connectors-heading">
+      <h2 id="connectors-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Connector specifications</h2>
+      <ul class="mt-3 flex flex-wrap gap-2">
+        {% for connector in page.ev_connector_types %}
+          <li class="rounded-full border border-slate-600 bg-slate-900/70 px-3 py-1.5 text-sm font-medium text-slate-200">{{ connector | escape }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if page.nearby_stations.size > 0 %}
+    <section class="mt-8" aria-labelledby="nearby-stations-heading">
+      <h2 id="nearby-stations-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Nearby EV charging stations</h2>
+      <ul class="mt-3 grid gap-3 sm:grid-cols-2">
+        {% for station in page.nearby_stations %}
+          <li>
+            <a href="{{ station.page_url | relative_url }}" class="block rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433]">
+              <span class="font-semibold text-white">{{ station.station_name | escape }}</span>
+              <span class="mt-1 block text-sm text-slate-400">
+                {% if station.city %}{{ station.city | escape }}{% endif %}{% if station.city and station.state %}, {% endif %}{% if station.state %}{{ station.state | escape }}{% endif %}
+              </span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if page.latitude and page.longitude %}
+    <section class="mt-8" aria-labelledby="location-map-heading">
+      <div class="mb-3 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="location-map-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Station location</h2>
+        </div>
+        <a href="https://www.openstreetmap.org/?mlat={{ page.latitude }}&amp;mlon={{ page.longitude }}#map=16/{{ page.latitude }}/{{ page.longitude }}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-cyan-200 underline decoration-cyan-300/40 underline-offset-4 hover:text-cyan-100">Open in OpenStreetMap</a>
+      </div>
+      <div id="station-map" class="h-72 overflow-hidden rounded-xl border border-slate-700/80 bg-[#0d1c2b] sm:h-96" role="region" aria-label="Map showing {{ page.station_name | escape }}" data-latitude="{{ page.latitude }}" data-longitude="{{ page.longitude }}" data-station-name="{{ page.station_name | escape }}"></div>
+      <p class="mt-2 text-xs text-slate-500">Map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" class="underline hover:text-slate-300">OpenStreetMap contributors</a>.</p>
+    </section>
+  {% else %}
+    <section class="mt-8 rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-5" aria-labelledby="location-map-heading">
+      <h2 id="location-map-heading" class="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Station location</h2>
+      <p class="mt-2 text-sm text-slate-400">Map coordinates are not available for this station.</p>
+    </section>
+  {% endif %}
+
+  <aside class="mt-8 rounded-xl border border-amber-300/20 bg-amber-300/[0.06] p-5">
+    <h2 class="text-sm font-semibold text-amber-100">Confirm details before you travel</h2>
+    <p class="mt-2 text-sm leading-6 text-slate-300">Station information can change. Contact the location or charging network to confirm current access, connector availability, and any fees before your visit.</p>
+  </aside>
+
+  {% include faq_section.html %}
+</article>
+
+{% if page.latitude and page.longitude %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const stationMapElement = document.getElementById("station-map");
+    const stationCoordinates = [
+      Number(stationMapElement.dataset.latitude),
+      Number(stationMapElement.dataset.longitude)
+    ];
+    const stationMap = L.map("station-map").setView(stationCoordinates, 15);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    }).addTo(stationMap);
+    const stationPopup = document.createElement("span");
+    stationPopup.textContent = stationMapElement.dataset.stationName;
+    L.marker(stationCoordinates).addTo(stationMap).bindPopup(stationPopup);
+  </script>
+{% endif %}
