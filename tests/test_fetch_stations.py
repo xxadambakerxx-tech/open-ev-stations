@@ -2,6 +2,7 @@ import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from urllib.error import URLError
 from unittest.mock import patch
 
 from tools import fetch_stations
@@ -78,6 +79,21 @@ class FetchStationsTests(unittest.TestCase):
 
         self.assertEqual([record["id"] for record in records], [1, 2, 3])
         self.assertEqual(requests, [("CA", 0, "test-key"), ("CA", 2, "test-key")])
+
+    def test_network_failure_includes_reason_without_exposing_api_key(self):
+        with patch.object(
+            fetch_stations,
+            "urlopen",
+            side_effect=URLError("connection failed for test-key"),
+        ) as mocked_urlopen, patch.object(fetch_stations.time, "sleep"):
+            with self.assertRaisesRegex(
+                RuntimeError,
+                r"AFDC API request failed for CA at offset 0 after 3 attempts: "
+                r"connection failed for \[REDACTED\]",
+            ):
+                fetch_stations.fetch_page("CA", 0, "test-key")
+
+        self.assertEqual(mocked_urlopen.call_count, fetch_stations.MAX_RETRIES)
 
     def test_writes_valid_json_to_requested_path(self):
         stations = [{"id": "1", "station_name": "Example"}]
