@@ -27,7 +27,7 @@ description: Discover destination chargers, RV-friendly EV hookups, and charging
           <h3 class="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Destination types</h3>
           <div class="space-y-1">
             {% for category in site.data.station_categories %}
-              <a href="{{ '/categories/' | relative_url }}{{ category.id | escape }}/" class="flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-cyan-200">
+              <a href="{{ '/category/' | relative_url }}{{ category.id | escape }}/" class="flex items-center justify-between gap-2 rounded-md px-2 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-cyan-200">
                 <span>{{ category.name | escape }}</span><span class="shrink-0 text-xs tabular-nums text-slate-500">{{ category.count }}</span>
               </a>
             {% endfor %}
@@ -55,7 +55,7 @@ description: Discover destination chargers, RV-friendly EV hookups, and charging
       </div>
 
       <div class="relative mx-auto flex min-h-[270px] max-w-4xl items-center justify-center px-5 py-5 sm:min-h-[320px] sm:px-10">
-        <div id="us-state-map" data-state-page-prefix="{{ '/states/' | relative_url }}" class="w-full max-w-[760px] drop-shadow-[0_0_24px_rgba(34,211,238,0.12)]" aria-label="Interactive map of the United States. Select a state to browse its EV charging stations." role="group">
+        <div id="us-state-map" data-state-page-prefix="{{ '/state/' | relative_url }}" class="w-full max-w-[760px] drop-shadow-[0_0_24px_rgba(34,211,238,0.12)]" aria-label="Interactive map of the United States. Select a state to browse its EV charging stations." role="group">
           {% include us-state-map.svg %}
         </div>
       </div>

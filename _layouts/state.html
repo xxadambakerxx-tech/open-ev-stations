@@ -38,7 +38,7 @@ layout: default
       <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {% for category in page.categories %}
           <li>
-            <a href="{{ '/categories/' | relative_url }}{{ category.id | escape }}/{{ page.state.slug | escape }}/" class="flex h-full items-center justify-between gap-4 rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433] sm:p-5">
+            <a href="{{ '/state/' | relative_url }}{{ page.state.slug | escape }}/category/{{ category.id | escape }}/" class="flex h-full items-center justify-between gap-4 rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433] sm:p-5">
               <div>
                 <h3 class="text-base font-semibold text-white">{{ category.name | escape }}</h3>
                 <p class="mt-1 text-sm text-slate-400">{{ category.count }} {% if category.count == 1 %}location{% else %}locations{% endif %}</p>
@@ -54,4 +54,6 @@ layout: default
       <p class="rounded-lg border border-dashed border-slate-700 bg-[#0d1c2b]/60 px-4 py-5 text-sm text-slate-400">There are no charging categories in this state or territory yet.</p>
     {% endif %}
   </section>
+
+  {% include faq_section.html %}
 </article>

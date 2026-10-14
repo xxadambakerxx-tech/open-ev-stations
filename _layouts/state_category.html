@@ -3,7 +3,7 @@ layout: default
 ---
 
 <article class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-  <a href="{{ '/categories/' | relative_url }}{{ page.category.id | escape }}/" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
+  <a href="{{ '/category/' | relative_url }}{{ page.category.id | escape }}/" class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-200 transition hover:text-cyan-100">
     <svg viewBox="0 0 20 20" fill="currentColor" class="size-4 rotate-90" aria-hidden="true">
       <path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
     </svg>
@@ -29,7 +29,7 @@ layout: default
       <ul class="grid gap-3 sm:grid-cols-2">
         {% for station in page.stations %}
           <li>
-            <a href="{{ '/chargers/' | relative_url }}{{ station.slug | escape }}/" class="block h-full rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433] sm:p-5">
+            <a href="{{ station.page_url | relative_url }}" class="block h-full rounded-xl border border-slate-700/80 bg-[#0d1c2b] p-4 transition hover:border-cyan-300/40 hover:bg-[#102433] sm:p-5">
               <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0">
                   <h3 class="truncate text-base font-semibold text-white">{{ station.station_name | escape }}</h3>
@@ -68,4 +68,6 @@ layout: default
       <p class="rounded-lg border border-dashed border-slate-700 bg-[#0d1c2b]/60 px-4 py-5 text-sm text-slate-400">There are no stations in this category and state yet.</p>
     {% endif %}
   </section>
+
+  {% include faq_section.html %}
 </article>

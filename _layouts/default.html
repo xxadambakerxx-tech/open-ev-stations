@@ -5,7 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ page.description | default: site.description | escape }}">
     <title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
+    <meta property="og:title" content="{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}">
+    <meta property="og:description" content="{{ page.description | default: site.description | escape }}">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="{{ '/assets/css/tailwind.css' | relative_url }}">
+    {% if page.layout == "station" %}
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Place",
+          "name": {{ page.station_name | jsonify | replace: '</', '<\/' }},
+          "description": {{ page.description | jsonify | replace: '</', '<\/' }},
+          {% if page.street_address or page.city or page.state or page.zip %}
+          "address": {
+            "@type": "PostalAddress"
+            {% if page.street_address %},"streetAddress": {{ page.street_address | jsonify | replace: '</', '<\/' }}{% endif %}
+            {% if page.city %},"addressLocality": {{ page.city | jsonify | replace: '</', '<\/' }}{% endif %}
+            {% if page.state %},"addressRegion": {{ page.state | jsonify | replace: '</', '<\/' }}{% endif %}
+            {% if page.zip %},"postalCode": {{ page.zip | jsonify | replace: '</', '<\/' }}{% endif %}
+          }
+          {% endif %}
+          {% if page.latitude and page.longitude %},
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": {{ page.latitude | jsonify }},
+            "longitude": {{ page.longitude | jsonify }}
+          }
+          {% endif %},
+          "amenityFeature": [
+            {
+              "@type": "LocationFeatureSpecification",
+              "name": "Level 1 EV charger",
+              "value": {{ page.ev_level1_num | default: 0 | jsonify }}
+            },
+            {
+              "@type": "LocationFeatureSpecification",
+              "name": "Level 2 EV charger",
+              "value": {{ page.ev_level2_num | default: 0 | jsonify }}
+            },
+            {
+              "@type": "LocationFeatureSpecification",
+              "name": "DC fast EV charger",
+              "value": {{ page.ev_dc_fast_num | default: 0 | jsonify }}
+            }
+            {% for connector in page.ev_connector_types %}
+              ,{
+                "@type": "LocationFeatureSpecification",
+                "name": {{ connector | append: " connector" | jsonify | replace: '</', '<\/' }},
+                "value": true
+              }
+            {% endfor %}
+          ]
+        }
+      </script>
+    {% endif %}
     {% if page.latitude and page.longitude %}
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     {% endif %}
