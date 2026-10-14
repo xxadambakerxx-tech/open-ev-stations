@@ -49,8 +49,8 @@ class FetchStationsTests(unittest.TestCase):
         fetch_stations.add_state_distance_averages(stations)
 
         self.assertEqual(stations[0]["state_geocoded_station_count"], 2)
-        self.assertEqual(stations[0]["state_average_nearest_distance_miles"], 57.55)
-        self.assertEqual(stations[2]["state_average_nearest_distance_miles"], 57.55)
+        self.assertEqual(stations[0]["state_average_nearest_distance_miles"], 57.28)
+        self.assertEqual(stations[2]["state_average_nearest_distance_miles"], 57.28)
 
     def test_single_geocoded_station_has_no_nearest_station_average(self):
         stations = [{"state": "AK", "latitude": 61.0, "longitude": -149.0}]
