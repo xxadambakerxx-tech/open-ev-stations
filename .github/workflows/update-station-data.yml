@@ -25,6 +25,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Check connectivity to AFDC API host
+        run: |
+          echo "Resolving developer.nrel.gov..."
+          nslookup developer.nrel.gov || true
+          echo "HTTP HEAD to AFDC base URL..."
+          curl -I -sS --max-time 10 https://developer.nrel.gov/ || true
+
       - name: Fetch station data
         env:
           AFDC_API_KEY: ${{ secrets.AFDC_API_KEY }}
