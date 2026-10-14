@@ -6,6 +6,7 @@ A Jekyll site styled with Tailwind CSS for discovering EV destination chargers, 
 
 - Ruby and Bundler
 - Node.js and npm
+- Python 3.10 or later (for fetching station data)
 
 ## Get started
 
@@ -55,6 +56,21 @@ npm run build
 The importer requires the CSV columns `ID`, `Station Name`, and `Facility Type`; it also extracts `Street Address`, `Station Phone`, `City`, `State`, `ZIP`, `Access Days Time`, `EV Pricing`, `EV Connector Types`, `EV Level1 EVSE Num`, `EV Level2 EVSE Num`, `EV DC Fast Count`, `Latitude`, and `Longitude` when available. During import, it calculates each state's average nearest-station distance in straight-line miles using the Haversine formula and stores the rounded average and geocoded station count on each station record in `_data/destination_chargers.json`. State pages display this metric. The homepage map links to state pages showing available station categories and counts; selecting a category opens a state/category page listing matching stations. Category pages also list states and territories that have matching stations. Station detail pages display available phone numbers and link to each record. Valid coordinates are passed into each station page and rendered on a Leaflet map using OpenStreetMap tiles. Stations without both coordinates show a location-unavailable message instead. Missing charger counts display as zero and other missing details are labeled unavailable. Station structured data uses Schema.org `Place` with the available address, coordinates, charger counts, and connector types; the directory does not claim amenities that are absent from its source data.
 
 The raw CSV is excluded from the published site and ignored by Git to avoid committing the 28 MB source export. Commit the generated destination data to include station pages in a deployment. Station detail maps use Leaflet with OpenStreetMap tiles; follow the [OpenStreetMap tile usage policy](https://operations.osmfoundation.org/policies/tiles/).
+
+## Fetching station data from the AFDC API
+
+The API importer in `tools/fetch_stations.py` fetches active electric stations from the Alternative Fuels Data Center API, keeps destination facility types supported by the directory, calculates the state nearest-station metrics, and writes `_data/destination_chargers.json` for Jekyll. It uses Python's standard library and requires an API key:
+
+```sh
+# PowerShell
+$env:AFDC_API_KEY = "your-api-key"
+python tools/fetch_stations.py
+
+# macOS/Linux
+AFDC_API_KEY="your-api-key" python3 tools/fetch_stations.py
+```
+
+The `Update station data` GitHub Actions workflow runs weekly and can also be started manually with **Actions → Update station data → Run workflow**. Add an Actions repository secret named `AFDC_API_KEY` containing an API key from the [NREL developer network](https://developer.nrel.gov/). The workflow fetches the data, builds the site to validate the generated station pages, and commits changes to `_data/destination_chargers.json`. API failures or invalid/incomplete responses fail the workflow without replacing the existing data.
 
 The homepage state map is sourced from [Simplemaps' free U.S. SVG map](https://simplemaps.com/resources/svg-us) and used under its [SVG map license](https://simplemaps.com/resources/svg-license). Map attribution and usage details are published on the site's `/disclaimer/` page, linked from the footer.
 
