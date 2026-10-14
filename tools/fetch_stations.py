@@ -204,11 +204,14 @@ def fetch_page(state: str, offset: int, api_key: str) -> dict[str, object]:
                 raise RuntimeError(
                     f"AFDC API returned HTTP {error.code} for {state} at offset {offset}"
                 ) from None
-        except (URLError, TimeoutError, OSError):
+        except (URLError, TimeoutError, OSError) as error:
             if attempt == MAX_RETRIES - 1:
+                reason = error.reason if isinstance(error, URLError) else error
+                details = str(reason).replace(api_key, "[REDACTED]")
                 raise RuntimeError(
-                    f"AFDC API request failed for {state} at offset {offset} after {MAX_RETRIES} attempts"
-                ) from None
+                    f"AFDC API request failed for {state} at offset {offset} "
+                    f"after {MAX_RETRIES} attempts: {details}"
+                ) from error
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
             raise RuntimeError(f"AFDC API returned invalid JSON for {state} at offset {offset}") from error
         time.sleep(2**attempt)
