@@ -10,11 +10,12 @@ import os
 import re
 import sys
 import time
+import socket
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
 API_URL = "https://developer.nrel.gov/api/alt-fuel-stations/v1.json"
@@ -22,6 +23,10 @@ OUTPUT_PATH = Path(__file__).resolve().parents[1] / "_data" / "destination_charg
 PAGE_SIZE = 200
 MAX_RETRIES = 3
 EARTH_RADIUS_MILES = 3958.7613
+
+# How many times to attempt DNS resolution before giving up
+DNS_RESOLVE_RETRIES = 3
+DNS_RESOLVE_BACKOFF = 2
 
 STATE_CODES = (
     "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN "
@@ -205,16 +210,23 @@ def fetch_page(state: str, offset: int, api_key: str) -> dict[str, object]:
                     f"AFDC API returned HTTP {error.code} for {state} at offset {offset}"
                 ) from None
         except (URLError, TimeoutError, OSError) as error:
+            # Provide more explicit diagnostic information for DNS errors
+            underlying = getattr(error, 'reason', error)
+            if isinstance(underlying, socket.gaierror):
+                details = f"DNS resolution failed for host {urlparse(API_URL).hostname}: {underlying}"
+            else:
+                details = str(underlying)
+
             if attempt == MAX_RETRIES - 1:
-                reason = error.reason if isinstance(error, URLError) else error
-                details = str(reason).replace(api_key, "[REDACTED]")
+                # redact API key if it somehow appears in the message
+                details = details.replace(api_key, "[REDACTED]")
                 raise RuntimeError(
                     f"AFDC API request failed for {state} at offset {offset} "
                     f"after {MAX_RETRIES} attempts: {details}"
                 ) from error
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
             raise RuntimeError(f"AFDC API returned invalid JSON for {state} at offset {offset}") from error
-        time.sleep(2**attempt)
+        time.sleep(2 ** attempt)
 
     raise RuntimeError(f"AFDC API request failed for {state} at offset {offset}")
 
@@ -304,6 +316,24 @@ def write_stations(stations: list[dict[str, object]], output_path: Path) -> None
             temporary_path.unlink()
 
 
+def is_api_host_resolvable(api_url: str) -> bool:
+    """Attempt to resolve the API host name. Returns True if resolution succeeds."""
+    parsed = urlparse(api_url)
+    hostname = parsed.hostname
+    if not hostname:
+        return False
+
+    for attempt in range(DNS_RESOLVE_RETRIES):
+        try:
+            socket.getaddrinfo(hostname, None)
+            return True
+        except socket.gaierror as e:
+            print(f"DNS resolve attempt {attempt + 1}/{DNS_RESOLVE_RETRIES} failed for {hostname}: {e}", file=sys.stderr)
+            if attempt < DNS_RESOLVE_RETRIES - 1:
+                time.sleep(DNS_RESOLVE_BACKOFF ** attempt)
+    return False
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=OUTPUT_PATH, help="JSON output path")
@@ -311,6 +341,21 @@ def main() -> int:
     api_key = os.environ.get("AFDC_API_KEY", "").strip()
     if not api_key:
         parser.error("set the AFDC_API_KEY environment variable")
+
+    # preflight: check DNS resolution so we can provide a clearer fallback when runners
+    # lose DNS/network connectivity. If the AFDC host does not resolve and we already
+    # have existing station data, return success so the workflow can continue with
+    # the previous data instead of failing the whole run.
+    if not is_api_host_resolvable(API_URL):
+        if arguments.output.exists():
+            print(
+                f"Warning: Could not resolve AFDC API host ({urlparse(API_URL).hostname}).",
+                file=sys.stderr,
+            )
+            print(f"Using existing station data at {arguments.output}; skipping fetch.")
+            return 0
+        else:
+            parser.error(f"Could not resolve AFDC API host ({urlparse(API_URL).hostname}) and no existing data available")
 
     try:
         stations = fetch_all_stations(api_key)
