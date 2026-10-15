@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.error import URLError
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from tools import fetch_stations
 
@@ -89,12 +89,28 @@ class FetchStationsTests(unittest.TestCase):
         ) as mocked_urlopen, patch.object(fetch_stations.time, "sleep"):
             with self.assertRaisesRegex(
                 RuntimeError,
-                r"AFDC API request failed for CA at offset 0 after 3 attempts: "
+                rf"AFDC API request failed for CA at offset 0 after "
+                rf"{fetch_stations.MAX_RETRIES} attempts: "
                 r"connection failed for \[REDACTED\]",
             ):
                 fetch_stations.fetch_page("CA", 0, "test-key")
 
         self.assertEqual(mocked_urlopen.call_count, fetch_stations.MAX_RETRIES)
+
+    def test_network_failure_retries_and_recovers(self):
+        response = MagicMock()
+        response.__enter__.return_value.read.return_value = b'{"fuel_stations":[]}'
+
+        with patch.object(
+            fetch_stations,
+            "urlopen",
+            side_effect=[URLError("temporary DNS failure"), response],
+        ) as mocked_urlopen, patch.object(fetch_stations.time, "sleep") as mocked_sleep:
+            payload = fetch_stations.fetch_page("CA", 0, "test-key")
+
+        self.assertEqual(payload, {"fuel_stations": []})
+        self.assertEqual(mocked_urlopen.call_count, 2)
+        mocked_sleep.assert_called_once_with(1)
 
     def test_main_fetches_and_creates_output_file(self):
         stations = [{"id": "1", "station_name": "Example"}]

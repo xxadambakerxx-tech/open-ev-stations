@@ -21,13 +21,11 @@ from urllib.request import Request, urlopen
 API_URL = "https://developer.nrel.gov/api/alt-fuel-stations/v1.json"
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "_data" / "destination_chargers.json"
 PAGE_SIZE = 200
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 EARTH_RADIUS_MILES = 3958.7613
 
 STATE_CODES = (
-    "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN "
-    "MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA "
-    "WA WV WI WY PR"
+    "AL"
 ).split()
 
 DESTINATION_FACILITY_TYPES = {
