@@ -70,7 +70,7 @@ python tools/fetch_stations.py
 AFDC_API_KEY="your-api-key" python3 tools/fetch_stations.py
 ```
 
-The `Update station data` GitHub Actions workflow runs weekly and can also be started manually with **Actions → Update station data → Run workflow**. Add an Actions repository secret named `AFDC_API_KEY` containing an API key from the [NREL developer network](https://developer.nrel.gov/). The workflow fetches the data, builds the site to validate the generated station pages, and commits changes to `_data/destination_chargers.json`. API failures or invalid/incomplete responses fail the workflow without replacing the existing data.
+The `Update station data` GitHub Actions workflow runs weekly and can also be started manually with **Actions → Update station data → Run workflow**. Add an Actions repository secret named `AFDC_API_KEY` containing an API key from the [NREL developer network](https://developer.nrel.gov/). The workflow fetches the data, builds the site to validate the generated station pages, uploads the built site and `_data/destination_chargers.json` as the `station-data-and-site` workflow artifact, and commits changes to the station data. Download the artifact from a successful run's summary page. API failures or invalid/incomplete responses fail the workflow without replacing the existing data.
 
 The homepage state map is sourced from [Simplemaps' free U.S. SVG map](https://simplemaps.com/resources/svg-us) and used under its [SVG map license](https://simplemaps.com/resources/svg-license). Map attribution and usage details are published on the site's `/disclaimer/` page, linked from the footer.
 
