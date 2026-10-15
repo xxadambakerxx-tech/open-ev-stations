@@ -37,6 +37,10 @@ jobs:
           AFDC_API_KEY: ${{ secrets.AFDC_API_KEY }}
         run: python tools/fetch_stations.py
 
+      - name: Verify station data output
+        run: |
+          python -c "import json; from pathlib import Path; stations = json.loads(Path('_data/destination_chargers.json').read_text(encoding='utf-8')); assert isinstance(stations, list) and stations, 'Expected a non-empty station array'"
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

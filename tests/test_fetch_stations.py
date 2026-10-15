@@ -1,4 +1,5 @@
 import json
+import os
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -94,6 +95,19 @@ class FetchStationsTests(unittest.TestCase):
                 fetch_stations.fetch_page("CA", 0, "test-key")
 
         self.assertEqual(mocked_urlopen.call_count, fetch_stations.MAX_RETRIES)
+
+    def test_main_fetches_and_creates_output_file(self):
+        stations = [{"id": "1", "station_name": "Example"}]
+        with TemporaryDirectory() as temporary_directory:
+            output_path = Path(temporary_directory) / "destination_chargers.json"
+            with patch.dict(os.environ, {"AFDC_API_KEY": "test-key"}), patch(
+                "sys.argv", ["fetch_stations.py", "--output", str(output_path)]
+            ), patch.object(fetch_stations, "fetch_all_stations", return_value=stations) as fetch:
+                result = fetch_stations.main()
+
+            self.assertEqual(result, 0)
+            fetch.assert_called_once_with("test-key")
+            self.assertEqual(json.loads(output_path.read_text(encoding="utf-8")), stations)
 
     def test_writes_valid_json_to_requested_path(self):
         stations = [{"id": "1", "station_name": "Example"}]
