@@ -18,7 +18,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
-API_URL = "https://developer.nrel.gov/api/alt-fuel-stations/v1.json"
+API_URL = "https://developer.nlr.gov/api/alt-fuel-stations/v1.json"
 OUTPUT_PATH = Path(__file__).resolve().parents[1] / "_data" / "destination_chargers.json"
 PAGE_SIZE = 200
 MAX_RETRIES = 5
