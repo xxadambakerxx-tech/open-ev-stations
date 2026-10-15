@@ -24,10 +24,6 @@ PAGE_SIZE = 200
 MAX_RETRIES = 3
 EARTH_RADIUS_MILES = 3958.7613
 
-# How many times to attempt DNS resolution before giving up
-DNS_RESOLVE_RETRIES = 3
-DNS_RESOLVE_BACKOFF = 2
-
 STATE_CODES = (
     "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN "
     "MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA "
@@ -316,24 +312,6 @@ def write_stations(stations: list[dict[str, object]], output_path: Path) -> None
             temporary_path.unlink()
 
 
-def is_api_host_resolvable(api_url: str) -> bool:
-    """Attempt to resolve the API host name. Returns True if resolution succeeds."""
-    parsed = urlparse(api_url)
-    hostname = parsed.hostname
-    if not hostname:
-        return False
-
-    for attempt in range(DNS_RESOLVE_RETRIES):
-        try:
-            socket.getaddrinfo(hostname, None)
-            return True
-        except socket.gaierror as e:
-            print(f"DNS resolve attempt {attempt + 1}/{DNS_RESOLVE_RETRIES} failed for {hostname}: {e}", file=sys.stderr)
-            if attempt < DNS_RESOLVE_RETRIES - 1:
-                time.sleep(DNS_RESOLVE_BACKOFF ** attempt)
-    return False
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=OUTPUT_PATH, help="JSON output path")
@@ -341,21 +319,6 @@ def main() -> int:
     api_key = os.environ.get("AFDC_API_KEY", "").strip()
     if not api_key:
         parser.error("set the AFDC_API_KEY environment variable")
-
-    # preflight: check DNS resolution so we can provide a clearer fallback when runners
-    # lose DNS/network connectivity. If the AFDC host does not resolve and we already
-    # have existing station data, return success so the workflow can continue with
-    # the previous data instead of failing the whole run.
-    if not is_api_host_resolvable(API_URL):
-        if arguments.output.exists():
-            print(
-                f"Warning: Could not resolve AFDC API host ({urlparse(API_URL).hostname}).",
-                file=sys.stderr,
-            )
-            print(f"Using existing station data at {arguments.output}; skipping fetch.")
-            return 0
-        else:
-            parser.error(f"Could not resolve AFDC API host ({urlparse(API_URL).hostname}) and no existing data available")
 
     try:
         stations = fetch_all_stations(api_key)
