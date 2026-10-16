@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: update-station-data
@@ -15,68 +16,37 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    environment: Production
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Check connectivity to AFDC API host
-        run: |
-          echo "Resolving developer.nrel.gov..."
-          nslookup developer.nrel.gov || true
-          echo "HTTP HEAD to AFDC base URL..."
-          curl -I -sS --max-time 10 https://developer.nrel.gov/ || true
-
       - name: Fetch station data
         env:
           AFDC_API_KEY: ${{ secrets.AFDC_API_KEY }}
         run: python tools/fetch_stations.py
 
-      - name: Verify station data output
+      - name: Create pull request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          base: main
+          branch: automation/update-station-data
+          add-paths: _data/destination_chargers.json
+          commit-message: Update AFDC destination station data
+          title: Update AFDC destination station data
+          body: Automatically generated station data update.
+
+      - name: Merge pull request
+        if: steps.create-pull-request.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          python -c "import json; from pathlib import Path; stations = json.loads(Path('_data/destination_chargers.json').read_text(encoding='utf-8')); assert isinstance(stations, list) and stations, 'Expected a non-empty station array'"
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: npm
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-
-      - name: Install Node dependencies
-        run: npm ci
-
-      - name: Build site with updated data
-        run: npm run build
-
-      - name: Upload generated site and station data
-        uses: actions/upload-artifact@v4
-        with:
-          name: station-data-and-site
-          path: |
-            _site/
-            _data/destination_chargers.json
-          if-no-files-found: error
-
-      - name: Commit updated station data
-        run: |
-          if git diff --quiet -- _data/destination_chargers.json; then
-            echo "Station data has not changed."
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _data/destination_chargers.json
-          git commit -m "Update AFDC destination station data"
-          git push
+          gh pr merge "${{ steps.create-pull-request.outputs.pull-request-number }}" --merge --admin --delete-branch
