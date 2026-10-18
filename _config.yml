@@ -1,10 +1,29 @@
 title: Open EV Stations
 description: A directory of hotel destination chargers, RV-friendly EV hookups, and charging stops for electric road trips.
-url: ""
+url: "https://open-ev-stations.xxadambakerxx.workers.dev"
 baseurl: ""
 
 markdown: kramdown
+kramdown:
+  input: GFM
 permalink: /blog/:title/
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-last-modified-at
+  - jekyll-archives
+
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layouts:
+    category: topic_archive
+    tag: topic_archive
+  permalinks:
+    category: /guides/category/:name/
+    tag: /guides/tag/:name/
 
 exclude:
   - Gemfile

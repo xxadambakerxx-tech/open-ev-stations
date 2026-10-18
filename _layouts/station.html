@@ -38,7 +38,7 @@ layout: default
       {% unless page.street_address or page.city or page.state or page.zip %}Location details have not been provided.{% endunless %}
     
     {% if page.station_phone %}
-      <span class="mt-2 text-sm text-slate-300">|Phone: <a href="tel:{{ page.station_phone | escape }}" class="font-medium text-cyan-200 underline decoration-cyan-300/40 underline-offset-4 transition hover:text-cyan-100">{{ page.station_phone | escape }}</a></span>
+      <span class="mt-2 text-sm text-slate-300">| Phone: <a href="tel:{{ page.station_phone | escape }}" class="font-medium text-cyan-200 underline decoration-cyan-300/40 underline-offset-4 transition hover:text-cyan-100">{{ page.station_phone | escape }}</a></span>
     {% endif %}
     </p>
   </header>

@@ -31,6 +31,8 @@ npm run build
 
 The Tailwind source stylesheet is `assets/css/tailwind.input.css`; the compiled stylesheet is generated at `assets/css/tailwind.css`.
 
+Jekyll uses Kramdown's GitHub Flavored Markdown parser, `jekyll-seo-tag` for page metadata, `jekyll-sitemap` for the sitemap, `jekyll-last-modified-at` to report source-file update dates from Git history (or file modification times when Git is unavailable), and `jekyll-archives` for blog category and tag pages. Blog archives use `/guides/category/<name>/` and `/guides/tag/<name>/`, separate from the station categories at `/category/<name>/`; add `categories` and `tags` to post front matter to classify new guides. The public origin is configured as `url` in `_config.yml`; update it if the deployment hostname changes so canonical URLs and sitemap entries stay correct. The root `robots.txt` points crawlers to the sitemap. Keep non-content pages such as 404, admin, or confirmation pages out of the sitemap by setting `sitemap: false` in their front matter. Rendered images receive lazy loading automatically unless they already specify a `loading` attribute.
+
 ## Project status
 
 The responsive directory includes an interactive U.S. state map, state and category hubs, and individual station pages with interactive maps. Station pages use location- and equipment-specific titles and descriptions, place structured data, breadcrumbs, and cross-links to nearby stations when shared ZIP-code or city data is available. Station, state, state/category, and category pages include visible FAQs generated from available directory data. The site is intentionally read-only and does not provide trip planning.
