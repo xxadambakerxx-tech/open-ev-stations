@@ -2,6 +2,12 @@
 layout: post
 title: "Guide: Packing for an EV road-trip kit"
 excerpt: "Pack smart, charge confidently, and turn every EV road trip into a smooth adventure."
+categories:
+  - Road Trips
+tags:
+  - Packing
+  - Road Trip Planning
+  - Charging Basics
 ---
 
 Planning a long-distance trip in an electric vehicle (EV) is straightforward once you understand charging speeds, plug compatibility, and network apps. Written specifically for first-time EV drivers and owners, this practical ~8-minute guide gives you the technical know-how to navigate public charging networks efficiently and drive across the country with complete confidence.

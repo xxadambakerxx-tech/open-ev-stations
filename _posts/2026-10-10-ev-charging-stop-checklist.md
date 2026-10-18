@@ -2,6 +2,12 @@
 layout: post
 title: "Guide: EV Charging Stop Checklist"
 excerpt: "Use this quick checklist to plug in safely, charge smarter, and leave every station ready for the next driver."
+categories:
+  - Road Trips
+tags:
+  - Checklist
+  - Charging Basics
+  - Road Trip Planning
 ---
 
 1. Overview & Essential Charger Standards

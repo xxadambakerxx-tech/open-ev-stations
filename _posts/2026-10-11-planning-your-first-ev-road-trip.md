@@ -2,6 +2,10 @@
 layout: post
 title: "Guide: Planning your first EV road trip"
 excerpt: "Plan smarter charging stops, avoid range anxiety, and make your first EV road trip feel effortless."
+categories:
+  - Road Trips
+tags:
+  - Road Trip Planning
 ---
 
 Planning a long-distance trip in an electric vehicle (EV) is straightforward once you understand charging speeds, plug compatibility, and network apps. Written specifically for first-time EV drivers and owners, this practical guide gives you the technical know-how to navigate public charging networks efficiently and drive across the country with complete confidence.

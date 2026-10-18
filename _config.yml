@@ -12,6 +12,18 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
   - jekyll-last-modified-at
+  - jekyll-archives
+
+jekyll-archives:
+  enabled:
+    - categories
+    - tags
+  layouts:
+    category: topic_archive
+    tag: topic_archive
+  permalinks:
+    category: /guides/category/:name/
+    tag: /guides/tag/:name/
 
 exclude:
   - Gemfile

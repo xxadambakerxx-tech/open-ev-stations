@@ -16,6 +16,35 @@ layout: default
     <p class="mt-2 text-sm text-slate-400">Charging explainers and practical advice for the road.</p>
   </header>
 
+  <nav class="mt-5 space-y-4" aria-label="Browse guides by topic">
+    <div>
+      <h2 class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Categories</h2>
+      <ul class="mt-2 flex flex-wrap gap-2">
+        {% for category in site.categories %}
+          {% assign category_name = category[0] %}
+          <li>
+            <a href="{{ '/guides/category/' | relative_url }}{{ category_name | slugify }}/" class="inline-flex rounded-full border border-slate-700 bg-[#0d1c2b] px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:border-cyan-300/40">
+              {{ category_name | escape }} <span class="ml-1 text-slate-500">{{ category[1].size }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h2 class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Topics</h2>
+      <ul class="mt-2 flex flex-wrap gap-2">
+        {% for tag in site.tags %}
+          {% assign tag_name = tag[0] %}
+          <li>
+            <a href="{{ '/guides/tag/' | relative_url }}{{ tag_name | slugify }}/" class="inline-flex rounded-full border border-slate-700 bg-[#0d1c2b] px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:border-cyan-300/40">
+              {{ tag_name | escape }} <span class="ml-1 text-slate-500">{{ tag[1].size }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+
   <div class="mt-6">
     {% if page.posts.size > 0 %}
       {% include post_cards.html posts=page.posts %}

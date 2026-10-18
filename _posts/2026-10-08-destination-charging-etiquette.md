@@ -2,6 +2,11 @@
 layout: post
 title: "Guide: Destination Charging Etiquette"
 excerpt: "Good EV etiquette means sharing plugs, timing your stops, and leaving every destination charger ready for the next driver."
+categories:
+  - Charging
+tags:
+  - Destination Charging
+  - Etiquette
 ---
 
 1. Introduction to Destination Charging

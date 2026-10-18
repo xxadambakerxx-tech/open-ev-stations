@@ -2,6 +2,11 @@
 layout: post
 title: "Guide: Understanding EV Connector Types"
 excerpt: "Know your plugs, power levels, and adapters to make every EV charge easier and safer."
+categories:
+  - Charging
+tags:
+  - Charging Basics
+  - Connectors
 ---
 
 1. Introduction: Navigating the North American EV Charging Landscape
